@@ -173,8 +173,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 pyvenv.cfg
- share/
- Scripts/
- Lib/
- Include/
- etc/
+share/
+Scripts/
+Lib/
+Include/
+etc/
