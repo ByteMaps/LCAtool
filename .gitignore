@@ -172,11 +172,9 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-
 pyenv.cfg
-.gitignore
-share/
-Scripts/
-Lib/
-Include/
-etc/
+ share/
+ Scripts/
+ Lib/
+ Include/
+ etc/
