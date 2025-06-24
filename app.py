@@ -38,16 +38,16 @@ if st.session_state.form1_submitted and not st.session_state.form2_submitted:
 		material_quantities = {}
 		transport_quantities = {}
 
-		for material in range(len(st.session_state.materials)):
+		for material in st.session_state.materials:
 			name = material
-			value = st.number_input(f"Material {name}", min_value=0.0, step=0.1, key=f"quant_mat_{material}")
+			value = st.number_input(f"{name}", min_value=0.0, step=0.1, key=f"quant_mat_{material}")
 			material_quantities[name] = value
 
 		st.write("Transport Options")
 
-		for transport in range(len(st.session_state.transport)):
+		for transport in st.session_state.transport:
 			name = transport
-			value = st.number_input(f"Transport type {name}", min_value=0.0, step=0.1, key=f"quant_trans_{transport}")
+			value = st.number_input(f"Type {name}", min_value=0.0, step=0.1, key=f"quant_trans_{transport}")
 			transport_quantities[name] = value
 
 		submit_values = st.form_submit_button("Enter")
