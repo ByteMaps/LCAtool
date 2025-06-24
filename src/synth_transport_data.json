@@ -1,0 +1,248 @@
+{
+  "TransportType_1": [
+    {
+      "Impact category": "Acidification",
+      "Reference unit": "molc H+ eq",
+      "Result": 0.0094178903
+    },
+    {
+      "Impact category": "Climate change",
+      "Reference unit": "kg CO2 eq",
+      "Result": 2.448825819
+    },
+    {
+      "Impact category": "Freshwater ecotoxicity",
+      "Reference unit": "CTUe",
+      "Result": 0.192219006
+    },
+    {
+      "Impact category": "Freshwater eutrophication",
+      "Reference unit": "kg P eq",
+      "Result": -5.1311e-05
+    },
+    {
+      "Impact category": "Human toxicity, cancer effects",
+      "Reference unit": "CTUh",
+      "Result": 4.2e-09
+    },
+    {
+      "Impact category": "Human toxicity, non-cancer effects",
+      "Reference unit": "CTUh",
+      "Result": 3.4e-09
+    },
+    {
+      "Impact category": "Ionizing radiation E (interim)",
+      "Reference unit": "CTUe",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Ionizing radiation HH",
+      "Reference unit": "kBq U235 eq",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Land use",
+      "Reference unit": "kg C deficit",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Marine eutrophication",
+      "Reference unit": "kg N eq",
+      "Result": 0.0008075693
+    },
+    {
+      "Impact category": "Mineral, fossil & ren resource depletion",
+      "Reference unit": "kg Sb eq",
+      "Result": 5.562e-07
+    },
+    {
+      "Impact category": "Ozone depletion",
+      "Reference unit": "kg CFC-11 eq",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Particulate matter",
+      "Reference unit": "kg PM2.5 eq",
+      "Result": 0.0005124335
+    },
+    {
+      "Impact category": "Photochemical ozone formation",
+      "Reference unit": "kg NMVOC eq",
+      "Result": 0.0067326598
+    },
+    {
+      "Impact category": "Terrestrial eutrophication",
+      "Reference unit": "molc N eq",
+      "Result": 0.0119351568
+    },
+    {
+      "Impact category": "Water resource depletion",
+      "Reference unit": "m3 water eq",
+      "Result": 0.0007477257
+    }
+  ],
+  "TransportType_2": [
+    {
+      "Impact category": "Acidification",
+      "Reference unit": "molc H+ eq",
+      "Result": 0.0103025842
+    },
+    {
+      "Impact category": "Climate change",
+      "Reference unit": "kg CO2 eq",
+      "Result": 2.1170982432
+    },
+    {
+      "Impact category": "Freshwater ecotoxicity",
+      "Reference unit": "CTUe",
+      "Result": 0.172006266
+    },
+    {
+      "Impact category": "Freshwater eutrophication",
+      "Reference unit": "kg P eq",
+      "Result": -4.7132e-05
+    },
+    {
+      "Impact category": "Human toxicity, cancer effects",
+      "Reference unit": "CTUh",
+      "Result": 4.3e-09
+    },
+    {
+      "Impact category": "Human toxicity, non-cancer effects",
+      "Reference unit": "CTUh",
+      "Result": 3.7e-09
+    },
+    {
+      "Impact category": "Ionizing radiation E (interim)",
+      "Reference unit": "CTUe",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Ionizing radiation HH",
+      "Reference unit": "kBq U235 eq",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Land use",
+      "Reference unit": "kg C deficit",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Marine eutrophication",
+      "Reference unit": "kg N eq",
+      "Result": 0.0008738075
+    },
+    {
+      "Impact category": "Mineral, fossil & ren resource depletion",
+      "Reference unit": "kg Sb eq",
+      "Result": 4.966e-07
+    },
+    {
+      "Impact category": "Ozone depletion",
+      "Reference unit": "kg CFC-11 eq",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Particulate matter",
+      "Reference unit": "kg PM2.5 eq",
+      "Result": 0.0005135122
+    },
+    {
+      "Impact category": "Photochemical ozone formation",
+      "Reference unit": "kg NMVOC eq",
+      "Result": 0.005997638
+    },
+    {
+      "Impact category": "Terrestrial eutrophication",
+      "Reference unit": "molc N eq",
+      "Result": 0.0126521245
+    },
+    {
+      "Impact category": "Water resource depletion",
+      "Reference unit": "m3 water eq",
+      "Result": 0.0006652219
+    }
+  ],
+  "TransportType_3": [
+    {
+      "Impact category": "Acidification",
+      "Reference unit": "molc H+ eq",
+      "Result": 0.0095754107
+    },
+    {
+      "Impact category": "Climate change",
+      "Reference unit": "kg CO2 eq",
+      "Result": 2.3744549108
+    },
+    {
+      "Impact category": "Freshwater ecotoxicity",
+      "Reference unit": "CTUe",
+      "Result": 0.1726620163
+    },
+    {
+      "Impact category": "Freshwater eutrophication",
+      "Reference unit": "kg P eq",
+      "Result": -5.04613e-05
+    },
+    {
+      "Impact category": "Human toxicity, cancer effects",
+      "Reference unit": "CTUh",
+      "Result": 4.6e-09
+    },
+    {
+      "Impact category": "Human toxicity, non-cancer effects",
+      "Reference unit": "CTUh",
+      "Result": 3.4e-09
+    },
+    {
+      "Impact category": "Ionizing radiation E (interim)",
+      "Reference unit": "CTUe",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Ionizing radiation HH",
+      "Reference unit": "kBq U235 eq",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Land use",
+      "Reference unit": "kg C deficit",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Marine eutrophication",
+      "Reference unit": "kg N eq",
+      "Result": 0.000904919
+    },
+    {
+      "Impact category": "Mineral, fossil & ren resource depletion",
+      "Reference unit": "kg Sb eq",
+      "Result": 4.841e-07
+    },
+    {
+      "Impact category": "Ozone depletion",
+      "Reference unit": "kg CFC-11 eq",
+      "Result": 0.0
+    },
+    {
+      "Impact category": "Particulate matter",
+      "Reference unit": "kg PM2.5 eq",
+      "Result": 0.0004585832
+    },
+    {
+      "Impact category": "Photochemical ozone formation",
+      "Reference unit": "kg NMVOC eq",
+      "Result": 0.0070439672
+    },
+    {
+      "Impact category": "Terrestrial eutrophication",
+      "Reference unit": "molc N eq",
+      "Result": 0.0144302524
+    },
+    {
+      "Impact category": "Water resource depletion",
+      "Reference unit": "m3 water eq",
+      "Result": 0.0007256473
+    }
+  ]
+}
