@@ -7,8 +7,8 @@ if "form1_submitted" not in st.session_state:
 if "form2_submitted" not in st.session_state:
 	st.session_state.form2_submitted = False
 
-st.session_state.material_objs = load_items_from_json("src/synth_material_data.json", "materials")
-st.session_state.transport_objs = load_items_from_json("src/synth_transport_data.json", "transport")
+st.session_state.material_objs = load_json("src/synth_material_data.json")
+st.session_state.transport_objs = load_json("src/synth_transport_data.json")
 
 if not st.session_state.form1_submitted:
 	with st.form("my_form"):
@@ -17,11 +17,11 @@ if not st.session_state.form1_submitted:
 		# Multi-select dropdown
 		selected_materials = st.multiselect(
 			"Materials",
-			options=[item.name for item in st.session_state.material_objs],
+			options=[item for item in st.session_state.material_objs],
 		)
 		selected_transport = st.multiselect(
 			"Transport Options",
-			options=[item.name for item in st.session_state.transport_objs],
+			options=[item for item in st.session_state.transport_objs],
 		)
 
 		# Submit button

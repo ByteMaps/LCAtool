@@ -27,17 +27,6 @@ def create_stacked_bar_chart(df):
                  title='Dynamic Stacked Bar Chart', barmode='stack')
     return fig
 
-
-# Generate or upload your data
-# uploaded_file = st.file_uploader("Upload your data", type="csv")
-# if uploaded_file:
-#     df = pd.read_csv(uploaded_file)
-#     x_col = st.selectbox("Select X column", df.columns)
-#     y_col = st.selectbox("Select Y column", df.columns)
-#     color_col = st.selectbox("Select color/stack column", df.columns)
-#     fig = px.bar(df, x=x_col, y=y_col, color=color_col, barmode='stack')
-#     st.plotly_chart(fig)
-# else:
 data = generate_data()
 
 # Calculate percentage values within each Category
@@ -53,3 +42,5 @@ fig = px.bar(
 	labels={'Percent': 'Percentage (%)'}
 )
 st.plotly_chart(fig)
+
+st.slider('Times of re-use', 0, 100, 10, 1)
