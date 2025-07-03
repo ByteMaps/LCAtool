@@ -1,14 +1,14 @@
 import streamlit as st
 import pandas as pd
 
-MATERIAL_PATH = "src/transport.csv"
+MATERIAL_PATH = "src/processes.csv"
 
 st.set_page_config(layout="wide")
-st.title("Transport Dataframe")
+st.title("Processes Dataframe")
 
 # Initialize session state
-if 'transport' not in st.session_state:
-	st.session_state.transport = pd.DataFrame()
+if 'processes' not in st.session_state:
+	st.session_state.processes = pd.DataFrame()
 
 # File path input
 file_path = st.text_input("File Path:", value=MATERIAL_PATH)
@@ -19,7 +19,7 @@ col1, col2 = st.columns(2)
 with col1:
 	if st.button("Load CSV"):
 		try:
-			st.session_state.transport = pd.read_csv(file_path, sep=";")
+			st.session_state.processes = pd.read_csv(file_path, sep=";")
 			st.success("File loaded successfully!")
 		except Exception as e:
 			st.error(f"Error loading file: {e}")
@@ -27,15 +27,15 @@ with col1:
 with col2:
 	if st.button("Save CSV"):
 		try:
-			st.session_state.transport.to_csv(file_path, index=False, sep=";")
+			st.session_state.processes.to_csv(file_path, index=False, sep=";")
 			st.success("File saved successfully!")
 		except Exception as e:
 			st.error(f"Error saving file: {e}")
 
 # Data editor
-if not st.session_state.transport.empty:
-	st.session_state.transport = st.data_editor(
-		st.session_state.transport,
+if not st.session_state.processes.empty:
+	st.session_state.processes = st.data_editor(
+		st.session_state.processes,
 		num_rows="dynamic",
 		use_container_width=True
 	)

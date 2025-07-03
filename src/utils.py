@@ -1,8 +1,8 @@
+"""This file is for loading and saving the JSON objects to the appropriate files"""
+
 import json
 import os
-
-
-"""This file is for loading and saving the JSON objects to the appropriate files"""
+import pandas as pd
 
 FILE_PATH = "src/synth_transport_data.json"
 
@@ -21,7 +21,46 @@ def save_json(data, path=FILE_PATH):
         json.dump(data, f, indent=4)
         
 
-if __name__ == "__main__":
+def	format_csv():
+	df = pd.read_excel("src/materials.xlsx")
+
+	# If you have multiple materials in the Excel, group them:
+	materials = df.groupby("Material name")
+
+	# Prepare columns for impact categories
+	impact_categories = df["Impact category"].unique()
+	# Ensure consistent ordering
+	impact_categories.sort()
+
+	# Build header
+	header = ["material name", "quantity"]
+	for category in impact_categories:
+		header.append(f"{category} amount")
+		header.append(f"{category} units")
+
+	# Prepare rows
+	rows = []
+
+	for material_name, group in materials:
+		row = [material_name, 1]  # quantity is set to 1
+		# Create a mapping: impact category -> (amount, unit)
+		impact_map = {
+			r["Impact category"]: (r["Result"], r["Reference unit"])
+			for _, r in group.iterrows()
+		}
+		for category in impact_categories:
+			amount, unit = impact_map.get(category, ("", ""))
+			row.append(amount)
+			row.append(unit)
+		rows.append(row)
+
+	# Convert to DataFrame
+	output_df = pd.DataFrame(rows, columns=header)
+
+	# Save to CSV
+	output_df.to_csv("output.csv", index=False, sep=";")
+        
+def test_json():
 	file_path = 'src/synth_transport_data.json'
 	transports = load_json()
 	for category in transports['TransportType_1']:
@@ -31,3 +70,6 @@ if __name__ == "__main__":
 	transports['Truck'] = transports.pop('TransportType_1')
 	print(transports)
 	save_json(transports)
+
+if __name__ == "__main__":
+     format_csv()
