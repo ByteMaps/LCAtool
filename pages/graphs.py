@@ -27,9 +27,9 @@ def create_stacked_bar_chart(df):
                  title='Dynamic Stacked Bar Chart', barmode='stack')
     return fig
 
-data = generate_data()
 
 # Calculate percentage values within each Category
+data = generate_data()
 data_percent = data.copy()
 data_percent['Percent'] = data_percent.groupby('Impact Category')['Value'].transform(lambda x: x / x.sum() * 100)
 fig = px.bar(

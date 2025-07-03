@@ -1,21 +1,9 @@
 import streamlit as st
 import json
 import os
+from src.utils import *
 
 DEFAULT_FILE_PATH = "src/synth_transport_data.json"
-
-# Load JSON from file or upload
-def load_json(file):
-    try:
-        return json.load(file)
-    except Exception as e:
-        st.error(f"Error loading JSON: {e}")
-        return {}
-
-# Save JSON to disk
-def save_json(data, path):
-    with open(path, "w") as f:
-        json.dump(data, f, indent=4)
 
 # App title
 st.title("Transport Editor")

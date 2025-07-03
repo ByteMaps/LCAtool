@@ -1,19 +1,25 @@
 import json
 import os
 
+
+"""This file is for loading and saving the JSON objects to the appropriate files"""
+
 FILE_PATH = "src/synth_transport_data.json"
 
-# Load JSON from file
+
 def load_json(path=FILE_PATH):
+    '''Load the data object from a file given path'''
     if os.path.exists(path):
         with open(path, "r") as f:
             return json.load(f)
     return {}
 
-# Save JSON to file
+
 def save_json(data, path=FILE_PATH):
+    '''Save the data object to a file given data and path, overwriting the whole file'''
     with open(path, "w") as f:
         json.dump(data, f, indent=4)
+        
 
 if __name__ == "__main__":
 	file_path = 'src/synth_transport_data.json'
