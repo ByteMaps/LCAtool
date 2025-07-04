@@ -7,10 +7,10 @@ impact_categories = ['GWP', 'Ozone Depletion', 'Photochem. Ozone Form.', 'Acidif
 					'Human Toxicity', 'FMT Ecotoxicity', 'Ionising Radiation', 'Particulate Matter', 'Land Use',
 					'Resource Depletion', 'Water Depletion']
 
-flows = ['Usage', 'Transport', 'End of Life', 'Production', 'Packaging']
+standard = ['Usage', 'Transport', 'End of Life', 'Production', 'Packaging']
 
 # Sample dynamic data generator
-def generate_data():
+def generate_data(flows):
 	data = []
 	for category in impact_categories:
 		# Choose a random number of flows for each category
@@ -29,7 +29,10 @@ def create_stacked_bar_chart(df):
 
 
 # Calculate percentage values within each Category
-data = generate_data()
+if 'flows' not in st.session_state:
+	data = generate_data(standard)
+else:
+	data = generate_data(st.session_state.flows)
 data_percent = data.copy()
 data_percent['Percent'] = data_percent.groupby('Impact Category')['Value'].transform(lambda x: x / x.sum() * 100)
 fig = px.bar(

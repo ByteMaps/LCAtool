@@ -3,78 +3,85 @@
 import json
 import os
 import pandas as pd
+import streamlit as st
 
-FILE_PATH = "src/synth_transport_data.json"
+FILE_PATH = "src/"
+
+MATERIALS = f'{FILE_PATH}materials.csv'
+TRANSPORT = f'{FILE_PATH}transport.csv'
+PROCESSES = f'{FILE_PATH}processes.csv'
+
+FLOWS = ['Production','Transport','Packaging','Usage','End of Life']
+
+# DB ========================================================================================================================================
+
+def load_materials():
+	st.session_state.materials = pd.DataFrame()
+	st.session_state.materials = pd.read_csv(MATERIALS, sep=";")
+
+def load_transport():
+	st.session_state.transport = pd.DataFrame()
+	st.session_state.transport = pd.read_csv(TRANSPORT, sep=";")
+
+def load_processes():
+	st.session_state.processes = pd.DataFrame()
+	st.session_state.processes = pd.read_csv(PROCESSES, sep=";")
+
+def	load_all():
+	load_materials()
+	load_processes()
+	load_transport()
+
+# FUNCTIONS ========================================================================================================================================
+
+def	add_to_db(name, itemtype, flowtype, description, df):
+	'''Format the new dataset and prepare to add to one of the databases'''
+
+	# Prepare data
+	df["Impact category"] = [x.lower() for x in df["Impact category"]]
+
+	results_dict = pd.Series(df["Result"].values, index=df["Impact category"]).to_dict()
+	units_dict = pd.Series(df["Reference unit"].values, index=df["Impact category"]).to_dict()
+	impact_tuples = {k: (results_dict[k], units_dict[k]) for k in results_dict}
+
+	# Set up row
+	row_data = {
+		"name": name,
+		"description": description,
+		"quantity": 1,
+		"flowtype": flowtype
+	}
+
+	# Add the impact values
+	for k, (value, unit) in impact_tuples.items():
+		row_data[f"{k} amount"] = value
+		row_data[f"{k} units"] = unit
+
+	save_newrow(row_data, itemtype)
 
 
-def load_json(path=FILE_PATH):
-    '''Load the data object from a file given path'''
-    if os.path.exists(path):
-        with open(path, "r") as f:
-            return json.load(f)
-    return {}
+def save_newrow(row_data, itemtype):
+	'''Save the new item based on type, then reload appropriate db'''
+	if itemtype == 'Materiaal':
+		if 'materials' not in st.session_state:
+			load_materials()
+		materials = st.session_state.materials
+		materials.loc[len(materials)] = row_data
+		st.session_state.materials.to_csv(MATERIALS, index=False, sep=";")
+		load_materials()
 
+	if itemtype == 'Proces':
+		if 'processes' not in st.session_state:
+			load_processes()
+		processes = st.session_state.processes
+		processes.loc[len(processes)] = row_data
+		st.session_state.processes.to_csv(PROCESSES, index=False, sep=";")
+		load_processes()
 
-def save_json(data, path=FILE_PATH):
-    '''Save the data object to a file given data and path, overwriting the whole file'''
-    with open(path, "w") as f:
-        json.dump(data, f, indent=4)
-        
-
-def	transform_to_csv(data):
-	'''Transform the Pandas dataframe into the appropriate CSV format'''
-	pass
-
-
-def	format_csv():
-	df = pd.read_excel("src/materials.xlsx")
-
-	# If you have multiple materials in the Excel, group them:
-	materials = df.groupby("Material name")
-
-	# Prepare columns for impact categories
-	impact_categories = df["Impact category"].unique()
-	# Ensure consistent ordering
-	impact_categories.sort()
-
-	# Build header
-	header = ["material name", "quantity"]
-	for category in impact_categories:
-		header.append(f"{category} amount")
-		header.append(f"{category} units")
-
-	# Prepare rows
-	rows = []
-
-	for material_name, group in materials:
-		row = [material_name, 1]  # quantity is set to 1
-		# Create a mapping: impact category -> (amount, unit)
-		impact_map = {
-			r["Impact category"]: (r["Result"], r["Reference unit"])
-			for _, r in group.iterrows()
-		}
-		for category in impact_categories:
-			amount, unit = impact_map.get(category, ("", ""))
-			row.append(amount)
-			row.append(unit)
-		rows.append(row)
-
-	# Convert to DataFrame
-	output_df = pd.DataFrame(rows, columns=header)
-
-	# Save to CSV
-	output_df.to_csv("output.csv", index=False, sep=";")
-        
-def test_json():
-	file_path = 'src/synth_transport_data.json'
-	transports = load_json()
-	for category in transports['TransportType_1']:
-		print(f"Cat: {category["Impact category"]} at {category["Result"]} {str(category["Reference unit"])}")
-	print(f"{len(transports['TransportType_1'])} categories indexed")
-
-	transports['Truck'] = transports.pop('TransportType_1')
-	print(transports)
-	save_json(transports)
-
-if __name__ == "__main__":
-     format_csv()
+	if itemtype == 'Transport':
+		if 'transport' not in st.session_state:
+			load_transport()
+		transport = st.session_state.transport
+		transport.loc[len(transport)] = row_data
+		st.session_state.transport.to_csv(TRANSPORT, index=False, sep=";")
+		load_transport()

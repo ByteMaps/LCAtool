@@ -4,6 +4,7 @@ import numpy as np
 from src.utils import *
 import uuid
 
+# SETUP ========================================================================================================================================
 st.title("Nieuwe Data")
 # Initialize session state
 
@@ -17,9 +18,7 @@ if 'type' not in st.session_state:
 if 'desc' not in st.session_state:
     st.session_state.desc = str(uuid.uuid4())
 
-def save_to_csv(name, type, description, df):
-	"""Save the form data to CSV"""
-	pass
+# FUNCTIONS ========================================================================================================================================
 
 def update():
 	# Change the key of the data editor to start over.
@@ -27,17 +26,19 @@ def update():
 	st.session_state.name = str(uuid.uuid4())
 	st.session_state.type = str(uuid.uuid4())
 	st.session_state.desc = str(uuid.uuid4())
-   
-st.session_state.item = pd.DataFrame(columns=["Impact Name", "Reference unit", "Result"])
+
+# LAYOUT ========================================================================================================================================
+
+st.session_state.item = pd.DataFrame(columns=["Impact category", "Reference unit", "Result"])
 
 with st.form("newItem"):
-	col1, col2 = st.columns(2)
-
+	col1, col2, col3 = st.columns(3)
 	with col1:
 		name = st.text_input("Naam", key=st.session_state.name)
-
 	with col2:
-		item_type = st.selectbox("Type", options=["Materiaal", "Transport", "Proces"], key=st.session_state.type)
+		item_type = st.selectbox("Type", options=["Materiaal", "Transport", "Proces"], key=st.session_state.type)			# TODO voeg toe aan db gebaseerd op type
+	with col3:
+		flow_type = st.selectbox("Flow", options=FLOWS)
 
 	description = st.text_input("Beschrijving", key=st.session_state.desc)
 		

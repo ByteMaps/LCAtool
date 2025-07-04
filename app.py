@@ -4,61 +4,23 @@ from src.utils import *
 st.title("LCA Tool voor verzorgend wassen")
 if "form1_submitted" not in st.session_state:
 	st.session_state.form1_submitted = False
-if "form2_submitted" not in st.session_state:
-	st.session_state.form2_submitted = False
-
-# Loading objects from files into session state
-st.session_state.material_objs = load_json("src/synth_material_data.json")
-st.session_state.transport_objs = load_json("src/synth_transport_data.json")
 
 # Selecting the materials and transport types from the loaded objects
-if not st.session_state.form1_submitted:
-	with st.form("my_form"):
-		st.write("Choose the materials and transport types:")
 
-		# Multi-select dropdown
-		selected_materials = st.multiselect(
-			"Materials",
-			options=[item for item in st.session_state.material_objs],
-		)
-		selected_transport = st.multiselect(
-			"Transport Options",
-			options=[item for item in st.session_state.transport_objs],
-		)
+with st.form("elementcheck"):
+	st.write("Kies de elementen")
 
-		# Submit button
-		submitted = st.form_submit_button("Submit")
-		if submitted:
-			st.session_state.materials = selected_materials
-			st.session_state.transport = selected_transport
-			st.session_state.form1_submitted = True
+	materialcheck = st.checkbox('Materials')
+	transportcheck = st.checkbox('Transport')
+	processescheck = st.checkbox('Processes')
 
-# Defining the quantities for each selected material and transport option
-if st.session_state.form1_submitted and not st.session_state.form2_submitted:
-	st.write(f"Please enter the quantities for materials and transport")
+	flows = st.multiselect('Flows', options=FLOWS)
 
-	with st.form("quantities_form"):
-		material_quantities = {}
-		transport_quantities = {}
+	# Submit button
+	submitted = st.form_submit_button("Submit")
+	if submitted:
+		st.session_state.form1_submitted = True
+		load_all()																		# TODO fix later based on selection
+		st.session_state.flows = flows
 
-		for material in st.session_state.materials:
-			name = material
-			value = st.number_input(f"{name}", min_value=0.0, step=0.1, key=f"quant_mat_{material}")
-			material_quantities[name] = value
 
-		st.write("Transport Options")
-
-		for transport in st.session_state.transport:
-			name = transport
-			value = st.number_input(f"Type {name}", min_value=0.0, step=0.1, key=f"quant_trans_{transport}")
-			transport_quantities[name] = value
-
-		submit_values = st.form_submit_button("Enter")
-		if submit_values:
-			st.session_state.form2_submitted = True
-			st.session_state.material_quantity = material_quantities
-			st.session_state.transport_quantity = transport_quantities
-
-# Confirmation and follow-up
-if st.session_state.form1_submitted and st.session_state.form2_submitted:
-	st.write("Please navigate to graphs for the results, see the sidebar.")
