@@ -21,6 +21,11 @@ def save_json(data, path=FILE_PATH):
         json.dump(data, f, indent=4)
         
 
+def	transform_to_csv(data):
+	'''Transform the Pandas dataframe into the appropriate CSV format'''
+	pass
+
+
 def	format_csv():
 	df = pd.read_excel("src/materials.xlsx")
 
