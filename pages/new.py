@@ -36,7 +36,7 @@ with st.form("newItem"):
 	with col1:
 		name = st.text_input("Naam", key=st.session_state.name)
 	with col2:
-		item_type = st.selectbox("Type", options=["Materiaal", "Transport", "Proces"], key=st.session_state.type)			# TODO voeg toe aan db gebaseerd op type
+		item_type = st.selectbox("Type", options=["Materiaal", "Transport", "Proces"], accept_new_options=True, key=st.session_state.type)
 	with col3:
 		flow_type = st.selectbox("Flow", options=FLOWS)
 
@@ -53,8 +53,9 @@ with st.form("newItem"):
 
 	submitted = st.form_submit_button("Toevoegen")
 	if submitted:
+		add_to_db(name, item_type, flow_type, description, st.session_state.item)
 		update()
 		st.success("Data toegevoegd!")
 		print(st.session_state.item)
 
-st.button("Wis Alles", on_click=update())
+st.button("Wis Alles", on_click=update)
