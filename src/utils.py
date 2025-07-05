@@ -12,10 +12,11 @@ TYPES = ['None']
 
 # DB ========================================================================================================================================
 
-def	load_all():
+def	load_all(filepath=FILE_PATH):
 	'''Load database from file'''
-	st.session_state.database = pd.DataFrame()
-	st.session_state.database = pd.read_csv(FILE_PATH, sep=";", index_col=False)
+	database = pd.DataFrame()
+	database = pd.read_csv(filepath, sep=";", index_col=False)
+	return database
 
 
 # FUNCTIONS ========================================================================================================================================
@@ -54,8 +55,8 @@ def save_newrow(row_data):
 	database = st.session_state.database
 	database.loc[len(database)] = row_data
 	st.session_state.database.to_csv(FILE_PATH, index=False, sep=";")
-	load_all()
+	st.session_state.database = load_all()
 
 if __name__ == '__main__':
-	load_all()
+	st.session_state.database = load_all()
 	print(st.session_state.database)

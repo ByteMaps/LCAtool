@@ -178,3 +178,8 @@ Scripts/
 Lib/
 Include/
 etc/
+
+.streamlit/
+.devcontainer/
+src/tests.ipynb
+src/materials.xlsx
