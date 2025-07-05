@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from src.utils import *
-import uuid
+from uuid import uuid4
 
 # SETUP ========================================================================================================================================
 st.title("Nieuwe Data")
@@ -10,22 +10,22 @@ st.title("Nieuwe Data")
 
 # Define a variable as a key
 if 'dek' not in st.session_state:
-    st.session_state.dek = str(uuid.uuid4())
+    st.session_state.dek = str(uuid4())
 if 'name' not in st.session_state:
-    st.session_state.name = str(uuid.uuid4())
+    st.session_state.name = str(uuid4())
 if 'type' not in st.session_state:
-    st.session_state.type = str(uuid.uuid4())
+    st.session_state.type = str(uuid4())
 if 'desc' not in st.session_state:
-    st.session_state.desc = str(uuid.uuid4())
+    st.session_state.desc = str(uuid4())
 
 # FUNCTIONS ========================================================================================================================================
 
 def update():
 	# Change the key of the data editor to start over.
-	st.session_state.dek = str(uuid.uuid4())
-	st.session_state.name = str(uuid.uuid4())
-	st.session_state.type = str(uuid.uuid4())
-	st.session_state.desc = str(uuid.uuid4())
+	st.session_state.dek = str(uuid4())
+	st.session_state.name = str(uuid4())
+	st.session_state.type = str(uuid4())
+	st.session_state.desc = str(uuid4())
 
 # LAYOUT ========================================================================================================================================
 

@@ -22,6 +22,3 @@ with st.form("elementcheck"):
 	if submitted:
 		st.session_state.form1_submitted = True
 		st.session_state.flows = flows
-
-#A
-

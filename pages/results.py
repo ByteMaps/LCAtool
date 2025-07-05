@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import random
-from src.utils import FILE_PATH, load_all
 
 impact_categories = ['GWP', 'Ozone Depletion', 'Photochem. Ozone Form.', 'Acidification', 'Eutrophication',
 					'Human Toxicity', 'FMT Ecotoxicity', 'Ionising Radiation', 'Particulate Matter', 'Land Use',
@@ -29,6 +28,7 @@ def	calculate_impacts(amount=1, usage=10, itemtypes=[], flowtypes=[]):
 	results_db = st.session_state.database.copy()
 	# Remove all columns containing 'units' in their header
 	results_db = results_db.loc[:, ~results_db.columns.str.contains('units', case=False)]
+	results_db.columns = results_db.columns.str.replace(' amount', '', regex=False)
 	if itemtypes:
 		filtered_db = results_db[results_db["itemtype"].isin(itemtypes)].copy()
 	else: filtered_db = results_db
@@ -43,15 +43,19 @@ def	calculate_impacts(amount=1, usage=10, itemtypes=[], flowtypes=[]):
 # Calculate percentage values within each Category
 def	impact_assessment():
 
-	figure_df = st.session_state.results_database.iloc[:,5:36].sum() # TODO rewrite using the flowtype as group
+	# figure_df = st.session_state.results_database.iloc[:,5:36].sum() # TODO rewrite using the flowtype as group
+	figure_df = st.session_state.results_database.drop(['name', 'description', 'quantity', 'itemtype'], axis=1)
+	figure_df = figure_df.melt(id_vars=['flowtype'], var_name="Impact Category", value_name="Value")
+	figure_df = figure_df.groupby(["Impact Category", "flowtype"], as_index=False)["Value"].sum()
+	figure_df = figure_df.rename(columns={'flowtype':'Flows'})
+	print(figure_df)
 
-
-	if 'flows' not in st.session_state:
-		data = generate_data(standard)
-	else:
-		data = generate_data(st.session_state.flows)
-	data_percent = data.copy()
-	data_percent['Percent'] = data_percent.groupby('Impact Category')['Value'].transform(lambda x: x / x.sum() * 100)
+	# if 'flows' not in st.session_state:
+	# 	data = generate_data(standard)
+	# else:
+	# 	data = generate_data(st.session_state.flows)
+	data_percent = figure_df.copy()
+	data_percent['Percent'] = figure_df.groupby('Impact Category')['Value'].transform(lambda x: x / x.sum() * 100)
 	fig = px.bar(
 		data_percent,
 		x='Impact Category',
@@ -77,9 +81,10 @@ with st.form("IAform"):				# TODO add reset button
 		calculate_impacts(quantity_multiplier, re_use, itemtypes, flowtypes)
 		impact_assessment()
 
-st.subheader("Productsysteem 1 gebruikseenheid")
-st.session_state.results_database = st.data_editor(
-	st.session_state.results_database,
-	use_container_width=True,
-	hide_index=True
-)
+if 'results_database' in st.session_state:
+	st.subheader("Productsysteem 1 gebruikseenheid")
+	st.session_state.results_database = st.data_editor(
+		st.session_state.results_database,
+		use_container_width=True,
+		hide_index=True
+	)
