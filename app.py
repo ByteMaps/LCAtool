@@ -2,8 +2,8 @@ import streamlit as st
 from src.utils import *
 
 st.title("LCA Tool voor verzorgend wassen")
-st.text("Welkom bij de LCA tool, gebouwd door Bytemaps Consulting! Deze simpele tool analyseert de impact van een product systeem volgens de ILCD Impact Assessment"
-"method (2011, midpoint). Voor het gebruik, voeg nieuwe impact waarden toe in het tabblad 'new', bewerk de database in 'database' en analyseer de resultaten in 'results'. Succes!")
+st.markdown("Welkom bij de LCA tool, gebouwd door Bytemaps Consulting! Deze simpele tool analyseert de impact van een product systeem volgens de ILCD Impact Assessment"
+"method (2011, midpoint) zoals direct geëxporteerd uit de ELCD database, OpenLCA. Voor het gebruik, voeg nieuwe impact waarden toe in het tabblad *new*, bewerk de database in *database* en analyseer de resultaten in *results*. ")
 if "form1_submitted" not in st.session_state:
 	st.session_state.form1_submitted = False
 

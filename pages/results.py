@@ -35,25 +35,21 @@ def	calculate_impacts(amount=1, usage=10, itemtypes=[], flowtypes=[]):
 	if flowtypes:
 		filtered_db = filtered_db[results_db["flowtype"].isin(flowtypes)].copy()
 	filtered_db.loc[:, "quantity"] = filtered_db["quantity"] * amount							# Quantity
-	filtered_db.loc[:, "quantity"] = filtered_db["quantity"].apply(lambda x: x*usage)			# Re-use
+	filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"] = filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"].apply(lambda x: x * usage)  # Re-use only for 'Usage' flowtype
 	filtered_db.iloc[:, 5:36] = filtered_db.iloc[:, 5:36].multiply(filtered_db["quantity"], axis=0)
 	st.session_state.results_database = filtered_db
 
 
 # Calculate percentage values within each Category
 def	impact_assessment():
+	'''Create a stacked barchart with the results'''
 
-	# figure_df = st.session_state.results_database.iloc[:,5:36].sum() # TODO rewrite using the flowtype as group
 	figure_df = st.session_state.results_database.drop(['name', 'description', 'quantity', 'itemtype'], axis=1)
 	figure_df = figure_df.melt(id_vars=['flowtype'], var_name="Impact Category", value_name="Value")
 	figure_df = figure_df.groupby(["Impact Category", "flowtype"], as_index=False)["Value"].sum()
 	figure_df = figure_df.rename(columns={'flowtype':'Flows'})
 	print(figure_df)
 
-	# if 'flows' not in st.session_state:
-	# 	data = generate_data(standard)
-	# else:
-	# 	data = generate_data(st.session_state.flows)
 	data_percent = figure_df.copy()
 	data_percent['Percent'] = figure_df.groupby('Impact Category')['Value'].transform(lambda x: x / x.sum() * 100)
 	fig = px.bar(

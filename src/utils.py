@@ -42,7 +42,7 @@ def	add_to_db(name, itemtype, flowtype, description, df):
 
 	# Add the impact values
 	for k, (value, unit) in impact_tuples.items():
-		row_data[f"{k} amount"] = value
+		row_data[f"{k} amount"] = float(value)
 		row_data[f"{k} units"] = unit
 
 	save_newrow(row_data)

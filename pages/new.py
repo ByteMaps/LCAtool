@@ -43,7 +43,7 @@ with st.form("newItem"):
 	description = st.text_input("Beschrijving", key=st.session_state.desc)
 		
 	# Data editor
-	st.write("Klik om een nieuwe rij aan te maken, CTRL+V daarna om data te plaatsen")
+	st.write("Klik om een nieuwe rij aan te maken, CTRL+V daarna om data te plaatsen. Deze data staat geformatteerd in OpenLCA per proces/flow")
 	st.session_state.item = st.data_editor(
 		st.session_state.item,
 		num_rows="dynamic",
