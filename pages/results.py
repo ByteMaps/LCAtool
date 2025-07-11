@@ -1,25 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import random
-
-impact_categories = ['GWP', 'Ozone Depletion', 'Photochem. Ozone Form.', 'Acidification', 'Eutrophication',
-					'Human Toxicity', 'FMT Ecotoxicity', 'Ionising Radiation', 'Particulate Matter', 'Land Use',
-					'Resource Depletion', 'Water Depletion']
-
-standard = ['Usage', 'Transport', 'End of Life', 'Production', 'Packaging']
-
-# Sample dynamic data generator
-def generate_data(flows):
-	data = []
-	for category in impact_categories:
-		# Choose a random number of flows for each category
-		n_flows = random.randint(1, len(flows))
-		selected_flows = random.sample(flows, n_flows)
-		for flow in selected_flows:
-			value = random.randint(5, 100)
-			data.append({'Impact Category': category, 'Flows': flow, 'Value': value})
-	return pd.DataFrame(data)
 
 
 def	calculate_impacts(amount=1, usage=10, itemtypes=[], flowtypes=[]):
