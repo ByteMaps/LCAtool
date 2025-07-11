@@ -3,7 +3,4 @@ plotly
 pandas
 numpy
 matplotlib
-uuid
 regex
-random
-plotly
