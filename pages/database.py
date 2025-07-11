@@ -4,9 +4,15 @@ from src.utils import *
 from uuid import uuid4
 
 st.set_page_config(layout="wide")
-st.title("Database")
 
-st.session_state.database = load_all()
+# SESSION ========================================================================================================================================
+
+if 'database' not in st.session_state:
+	st.session_state.database = load_all()
+
+# SESSION ========================================================================================================================================
+
+st.title("Database")
 
 if 'nde' not in st.session_state:
     st.session_state.nde = str(uuid4())

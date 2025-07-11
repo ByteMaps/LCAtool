@@ -4,9 +4,7 @@ import numpy as np
 from src.utils import *
 from uuid import uuid4
 
-# SETUP ========================================================================================================================================
-st.title("Nieuwe Data")
-# Initialize session state
+# SESSION ========================================================================================================================================
 
 # Define a variable as a key
 if 'dek' not in st.session_state:
@@ -18,7 +16,10 @@ if 'type' not in st.session_state:
 if 'desc' not in st.session_state:
     st.session_state.desc = str(uuid4())
 
-# FUNCTIONS ========================================================================================================================================
+if 'database' not in st.session_state:
+	st.session_state.database = load_all()
+
+# SESSION ========================================================================================================================================
 
 def update():
 	# Change the key of the data editor to start over.
@@ -27,8 +28,11 @@ def update():
 	st.session_state.type = str(uuid4())
 	st.session_state.desc = str(uuid4())
 
-# LAYOUT ========================================================================================================================================
+
+st.title("Nieuwe Data")
+
 entrytype = st.toggle("Invoer uit Excel")
+
 st.session_state.item = pd.DataFrame(columns=["Impact category", "Result"]) if not entrytype else pd.DataFrame(columns=["Impact category", "Reference unit", "Result"])
 
 with st.form("newItem"):
@@ -55,7 +59,7 @@ with st.form("newItem"):
 
 	submitted = st.form_submit_button("Toevoegen")
 	if submitted:
-		add_to_db(name, item_type, flow_type, description, st.session_state.item, entrytype)
+		add_to_db(name, item_type, flow_type, description, st.session_state.item, entrytype, st.session_state.database)
 		update()
 		st.success("Data toegevoegd!")
 
