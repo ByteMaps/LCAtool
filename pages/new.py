@@ -28,8 +28,8 @@ def update():
 	st.session_state.desc = str(uuid4())
 
 # LAYOUT ========================================================================================================================================
-
-st.session_state.item = pd.DataFrame(columns=["Impact category", "Reference unit", "Result"])
+entrytype = st.toggle("Invoer uit Excel")
+st.session_state.item = pd.DataFrame(columns=["Impact category", "Result"]) if not entrytype else pd.DataFrame(columns=["Impact category", "Reference unit", "Result"])
 
 with st.form("newItem"):
 	col1, col2, col3 = st.columns(3)
@@ -41,9 +41,11 @@ with st.form("newItem"):
 		flow_type = st.selectbox("Flow", options=FLOWS)
 
 	description = st.text_input("Beschrijving", key=st.session_state.desc)
-		
+			
+
 	# Data editor
-	st.write("Klik om een nieuwe rij aan te maken, CTRL+V daarna om data te plaatsen. Deze data staat geformatteerd in OpenLCA per proces/flow")
+	st.write("Klik om een nieuwe rij aan te maken, CTRL+V daarna om data te plaatsen. Deze data staat geformatteerd in OpenLCA per proces/flow, of \
+		  kan geëxporteerd worden uit Excel (check boven).")
 	st.session_state.item = st.data_editor(
 		st.session_state.item,
 		num_rows="dynamic",
@@ -53,7 +55,7 @@ with st.form("newItem"):
 
 	submitted = st.form_submit_button("Toevoegen")
 	if submitted:
-		add_to_db(name, item_type, flow_type, description, st.session_state.item)
+		add_to_db(name, item_type, flow_type, description, st.session_state.item, entrytype)
 		update()
 		st.success("Data toegevoegd!")
 		print(st.session_state.item)
