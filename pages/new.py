@@ -36,7 +36,7 @@ with st.form("newItem"):
 	with col1:
 		name = st.text_input("Naam", key=st.session_state.name)
 	with col2:
-		item_type = st.selectbox("Type", options=["Materiaal", "Transport", "Proces"], accept_new_options=True, key=st.session_state.type)
+		item_type = st.selectbox("Item", options=st.session_state.database["itemtype"].unique(), accept_new_options=True, key=st.session_state.type)
 	with col3:
 		flow_type = st.selectbox("Flow", options=FLOWS)
 
@@ -58,6 +58,5 @@ with st.form("newItem"):
 		add_to_db(name, item_type, flow_type, description, st.session_state.item, entrytype)
 		update()
 		st.success("Data toegevoegd!")
-		print(st.session_state.item)
 
 st.button("Wis Alles", on_click=update)

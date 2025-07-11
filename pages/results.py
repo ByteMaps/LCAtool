@@ -1,7 +1,10 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from src.utils import load_all
 
+if 'database' not in st.session_state:
+	st.session_state.database = load_all()
 
 def	calculate_impacts(amount=1, usage=10, itemtypes=[], flowtypes=[]):
 	'''Calculate the impacts based on the current database'''
@@ -29,7 +32,6 @@ def	impact_assessment():
 	figure_df = figure_df.melt(id_vars=['flowtype'], var_name="Impact Category", value_name="Value")
 	figure_df = figure_df.groupby(["Impact Category", "flowtype"], as_index=False)["Value"].sum()
 	figure_df = figure_df.rename(columns={'flowtype':'Flows'})
-	print(figure_df)
 
 	data_percent = figure_df.copy()
 	data_percent['Percent'] = figure_df.groupby('Impact Category')['Value'].transform(lambda x: x / x.sum() * 100)
@@ -45,13 +47,16 @@ def	impact_assessment():
 	
 	st.plotly_chart(fig)
 
+
+st.session_state.comparison = st.multiselect('Items om te vergelijken', options = st.session_state.database["itemtype"].unique())			# TODO finish in branch
+
 with st.form("IAform"):				# TODO add reset button
 	col1, col2 = st.columns(2)
 	with col1:
 		re_use = st.slider('Keren hergebruik', 0, 100, 10, 1)
 		quantity_multiplier = st.slider('Aantal gebruikseenheden', 1, 100, 1, 1)
 	with col2:
-		itemtypes = st.multiselect('Item types', options = st.session_state.database["itemtype"].unique())
+		itemtypes = st.multiselect('Items', options = st.session_state.database["itemtype"].unique())
 		flowtypes = st.multiselect('Flow types', options = st.session_state.database["flowtype"].unique())
 	submitted = st.form_submit_button("Maak")
 	if submitted:

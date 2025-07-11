@@ -51,7 +51,6 @@ def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False):
 		row_data[f"{k} amount"] = float(value)
 		row_data[f"{k} units"] = unit
 
-	print(row_data)
 	save_newrow(row_data)
 
 
@@ -67,4 +66,3 @@ def save_newrow(row_data):
 
 if __name__ == '__main__':
 	st.session_state.database = load_all()
-	print(st.session_state.database)
