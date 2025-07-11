@@ -4,5 +4,6 @@ pandas
 numpy
 matplotlib
 uuid
-re
+regex
 random
+plotly
