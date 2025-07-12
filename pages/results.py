@@ -1,5 +1,6 @@
 import streamlit as st
 from src.utils import *
+from src.visualisations import *
 
 # SESSION ========================================================================================================================================
 
