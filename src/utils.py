@@ -98,10 +98,11 @@ def	calculate_impacts(df, item, amount=1, usage=10, flowtypes=[]):
 	filtered_db.loc[:, "quantity"] = filtered_db["quantity"] * amount							# Quantity
 	filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"] = filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"].apply(lambda x: x * usage)  # Re-use only for 'Usage' flowtype
 	filtered_db.iloc[:, 5:36] = filtered_db.iloc[:, 5:36].multiply(filtered_db["quantity"], axis=0)
+
 	return filtered_db
 
 
-def	impact_assessment(df):
+def	impact_assessment(name, df):
 	'''
 	Create a stacked barchart with the impact results, assessed per flow per impact category.
 		- df: the dataframe with the impact results
@@ -112,6 +113,7 @@ def	impact_assessment(df):
 	figure_df = df.drop(['name', 'description', 'quantity', 'itemtype'], axis=1)
 	figure_df = figure_df.melt(id_vars=['flowtype'], var_name="Impact Category", value_name="Value")
 	figure_df = figure_df.groupby(["Impact Category", "flowtype"], as_index=False)["Value"].sum()
+	figure_df["Value"] = figure_df["Value"].clip(lower=0)
 	figure_df = figure_df.rename(columns={'flowtype':'Flows'})
 
 	data_percent = figure_df.copy()
@@ -121,9 +123,41 @@ def	impact_assessment(df):
 		x='Impact Category',
 		y='Percent',
 		color='Flows',
-		title='Impact Category Assessment',
+		title=f'ICA {name}',
 		barmode='stack',
 		labels={'Percent': 'Percentage (%)'}
+	)
+	return fig
+
+
+def impact_comparison(names, dfs):
+	'''
+	Create a clustered barchart comparing multiple items, showing absolute impact values per flow per impact category.
+		- names: list of item names corresponding to each dataframe
+		- dfs: list of dataframes with impact results
+
+	Returns a Plotly figure object.
+	'''
+	combined = []
+	for name, df in zip(names, dfs):
+		temp_df = df.drop(['name', 'description', 'quantity', 'itemtype'], axis=1)
+		temp_df = temp_df.melt(id_vars=['flowtype'], var_name="Impact Category", value_name="Value")
+		temp_df["Value"] = temp_df["Value"].clip(lower=0)
+		temp_df = temp_df.groupby(["Impact Category", "flowtype"], as_index=False)["Value"].sum()
+		temp_df["Name"] = name
+		combined.append(temp_df)
+	result_df = pd.concat(combined, ignore_index=True)
+	result_df = result_df.rename(columns={'flowtype': 'Flows'})
+
+	fig = px.bar(
+		result_df,
+		x="Impact Category",
+		y="Value",
+		color="Flows",
+		barmode="group",
+		facet_col="Name",
+		title="Impact Comparison",
+		labels={"Value": "Absolute Impact"}
 	)
 	return fig
 
