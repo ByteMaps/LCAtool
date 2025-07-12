@@ -57,5 +57,9 @@ if len(st.session_state.submissions.keys()) == len(st.session_state.comparison) 
 	if len(st.session_state.submissions.keys()) >= 2:
 		st.divider()
 		st.subheader("Clustered stacked barchart")
+		names = [keys for keys, _ in st.session_state.submissions.items()]
+		results = [dfs for _, dfs in st.session_state.submissions.items()]
+
+		st.plotly_chart(impact_comparison(names, results))
 
 	
