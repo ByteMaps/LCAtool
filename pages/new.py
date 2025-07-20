@@ -19,8 +19,6 @@ if 'desc' not in st.session_state:
 if 'database' not in st.session_state:
 	st.session_state.database = load_all()
 
-# SESSION ========================================================================================================================================
-
 def update():
 	# Change the key of the data editor to start over.
 	st.session_state.dek = str(uuid4())
@@ -28,6 +26,8 @@ def update():
 	st.session_state.type = str(uuid4())
 	st.session_state.desc = str(uuid4())
 
+
+# SESSION ========================================================================================================================================
 
 st.title("Nieuwe Data")
 

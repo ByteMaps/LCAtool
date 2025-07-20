@@ -183,3 +183,4 @@ etc/
 .devcontainer/
 src/tests.ipynb
 src/materials.xlsx
+other/

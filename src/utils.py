@@ -64,13 +64,13 @@ def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, databa
 
 def save_newrow(row_data, database=load_all()):
 	'''
-	Save the new item based on type, then reload appropriate database
+	Save the new item, then reload appropriate database
 		- row_data: the data to save, as a dictionary with keys matching the database columns
 
 	Returns the updated database.
 	'''
 	database.loc[len(database)] = row_data
-	st.session_state.database.to_csv(FILE_PATH, index=False, sep=";")
+	st.session_state.database.to_csv(FILE_PATH, index=False, sep=";")									# TODO review if session state is required here
 	st.session_state.database = load_all()
 
 

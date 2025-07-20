@@ -4,3 +4,6 @@ pandas
 numpy
 matplotlib
 regex
+nbformat
+supabase
+dotenv

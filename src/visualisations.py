@@ -1,5 +1,6 @@
 import pandas as pd
 import plotly.express as px
+from numpy import zeros
 
 def impact_assessment(name, df):
 	"""
@@ -64,3 +65,23 @@ def impact_comparison(names, dfs):
 		labels={"Percent": "Percentual Impact (%)"}
 	)
 	return fig
+
+def calc_timeline(re_use_impact, renewal_impact, re_use_times, renewal_time, time=365):
+	'''Calculate the item's GWP impact over time based on usage & renewal'''
+	timeline_impact = dict()
+	daily_usage = (re_use_times / renewal_time) * re_use_impact
+
+	for i in range(time):
+		day = daily_usage + timeline_impact[i-1] if i > 0 else daily_usage
+		if i % renewal_time == 0:
+			day += renewal_impact
+		timeline_impact[i] = round(day, 4)
+
+	return timeline_impact						# ? Normalise compared to other outputs?
+
+if __name__=='__main__':
+	impacts = pd.DataFrame(calc_timeline(0.03, 0.5, 5, 20).items(), columns=["Days", "GWP impact"])
+	print(impacts)
+
+	fig = px.line(impacts, x="Days", y="GWP impact", title="GWP output item X over 1 year")
+	fig.show(renderer="notebook")
