@@ -1,6 +1,5 @@
 import pandas as pd
 import plotly.express as px
-from numpy import zeros
 
 def impact_assessment(name, df):
 	"""

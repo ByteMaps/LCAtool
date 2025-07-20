@@ -4,8 +4,14 @@ import pandas as pd
 import streamlit as st
 from re import sub
 import plotly.express as px
+from uuid import uuid4
+from supabase import create_client
+from dotenv import load_dotenv
+from pandas import json_normalize
+import os
 
 FILE_PATH = "src/database.csv"
+TABLE = "test"
 
 FLOWS = ['Production','Transport','Packaging','Usage','End of Life']
 TYPES = ['None']
@@ -37,6 +43,7 @@ def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, databa
 
 	# Set up row
 	row_data = {
+		"id": uuid4(),
 		"name": name,
 		"description": description,
 		"quantity": 1,
@@ -97,6 +104,36 @@ def	calculate_impacts(df, item, amount=1, usage=10, flowtypes=[]):
 	filtered_db.iloc[:, 5:36] = filtered_db.iloc[:, 5:36].multiply(filtered_db["quantity"], axis=0)
 
 	return filtered_db
+
+def	load_database():
+	'''Build the supabase client and return the url, key and client for use in the app.
+	Returns:
+		url: the URL of the Supabase instance
+		key: the API key for the Supabase instance
+		client_db: the Supabase client object
+	'''
+	load_dotenv()
+
+	url = os.getenv("SUPABASE_URL")
+	key = os.getenv("SUPABASE_KEY")
+	client_db = create_client(url, key) # type: ignore
+	return url, key, client_db
+
+
+def	save_row(newrow, client_db):
+	client_db.table(TABLE).insert(newrow).execute()
+
+
+def overwrite_db(data, client_db):
+	'''Overwrite the database with the provided data. Make sure to use this with caution as it will delete all existing data and max batch size is 1000.
+	Args:
+		- data: a list of dictionaries containing the data to be saved
+		- client_db: the Supabase client object
+	Returns:
+		None
+	'''
+	client_db.table(TABLE).delete().not_.is_("id", "null").execute()
+	client_db.table(TABLE).insert(data).execute()
 
 
 if __name__ == '__main__':
