@@ -4,25 +4,18 @@ import pandas as pd
 import streamlit as st
 from re import sub
 from uuid import uuid4
+from supabase import create_client
+from dotenv import load_dotenv
+import os
+from pandas import json_normalize, to_numeric
 
-FILE_PATH = "src/database.csv"
-TABLE = "test"
+TABLE = "main"
 
 FLOWS = ['Production','Transport','Packaging','Usage','End of Life']
 TYPES = ['None']
 
 
-def	load_all(filepath=FILE_PATH):		# TODO becomes redundant
-	'''
-	Load database from file
-		- filepath: the path to the database file
-	'''
-	database = pd.DataFrame()
-	database = pd.read_csv(filepath, sep=";", index_col=False)
-	return database
-
-
-def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, database=load_all()):		# TODO rewrite input
+def	add_to_db(name, itemtype, flowtype, description, df, database, entrytype=False):
 	'''
 	Format the new dataset and prepare to add to one of the databases.
 		- name: the name of the item
@@ -38,7 +31,7 @@ def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, databa
 
 	# Set up row
 	row_data = {
-		"id": uuid4(),
+		"id": str(uuid4()),
 		"name": name,
 		"description": description,
 		"quantity": 1,
@@ -61,19 +54,7 @@ def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, databa
 		row_data[f"{k} amount"] = float(value)
 		row_data[f"{k} units"] = unit
 
-	save_newrow(row_data, database)	# TODO rewrite
-
-
-def save_newrow(row_data, database=load_all()):	# TODO becomes redundant
-	'''
-	Save the new item, then reload appropriate database
-		- row_data: the data to save, as a dictionary with keys matching the database columns
-
-	Returns the updated database.
-	'''
-	database.loc[len(database)] = row_data
-	st.session_state.database.to_csv(FILE_PATH, index=False, sep=";")
-	st.session_state.database = load_all()
+	save_newrow(row_data)
 
 
 def	calculate_impacts(df, item, amount=1, usage=10, flowtypes=[]):
@@ -96,6 +77,51 @@ def	calculate_impacts(df, item, amount=1, usage=10, flowtypes=[]):
 		filtered_db = filtered_db[results_db["flowtype"].isin(flowtypes)].copy()
 	filtered_db.loc[:, "quantity"] = filtered_db["quantity"] * amount							# Quantity
 	filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"] = filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"].apply(lambda x: x * usage)  # Re-use only for 'Usage' flowtype
-	filtered_db.iloc[:, 5:36] = filtered_db.iloc[:, 5:36].multiply(filtered_db["quantity"], axis=0)
+	# Multiply all columns except the first five (assumed metadata) by "quantity"
+	cols_to_multiply = [col for col in filtered_db.columns if col not in filtered_db.columns[:5] and not col.endswith("units")]
+	filtered_db[cols_to_multiply] = filtered_db[cols_to_multiply].apply(pd.to_numeric, errors='coerce')
+	filtered_db[cols_to_multiply] = filtered_db[cols_to_multiply].apply(lambda x: x * filtered_db["quantity"])
 
 	return filtered_db
+
+#=====================================================================================================================================================================
+
+def	load_database():
+	'''Build the supabase client and return the url, key and client for use in the app.
+	Returns:
+		url: the URL of the Supabase instance
+		key: the API key for the Supabase instance
+		client_db: the Supabase client object
+	'''
+	load_dotenv()
+
+	url = os.getenv("SUPABASE_URL")
+	key = os.getenv("SUPABASE_KEY")
+	client = create_client(url, key) # type: ignore
+	table = client.table(TABLE).select('*').execute()
+	database = json_normalize(table.data)
+	return client, database
+
+
+def	save_newrow(newrow):
+	if "client" not in st.session_state:
+		st.session_state.client, st.session_state.database = load_database()
+
+	st.session_state.client.table(TABLE).insert(newrow).execute()
+
+
+def overwrite_db(data, client):
+	'''Overwrite the database with the provided data. Make sure to use this with caution as it will delete all existing data and max batch size is 1000.
+	Args:
+		- data: a list of dictionaries containing the data to be saved
+		- client_db: the Supabase client object
+	Returns:
+		None
+	'''
+	client.table(TABLE).delete().not_.is_("id", "null").execute()
+	client.table(TABLE).insert(data).execute()
+
+
+# Remove trailing _1, _2, etc. from impact category names
+def clean_category(cat):
+	return sub(r'_\d+$', '', cat)

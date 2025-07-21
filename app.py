@@ -6,8 +6,8 @@ from src.utils import *
 if "form1_submitted" not in st.session_state:
 	st.session_state.form1_submitted = False
 
-if "database" not in st.session_state:	# TODO change loaded
-	st.session_state.database = load_all()
+if "database" not in st.session_state:
+	st.session_state.client, st.session_state.database = load_database()
 
 # SESSION ========================================================================================================================================
 

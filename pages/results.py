@@ -4,8 +4,8 @@ from src.visualisations import *
 
 # SESSION ========================================================================================================================================
 
-if 'database' not in st.session_state:	# TODO change loaded
-	st.session_state.database = load_all()
+if "database" not in st.session_state:
+	st.session_state.client, st.session_state.database = load_database()
 
 if 'submissions' not in st.session_state:
 	st.session_state.submissions = {}
