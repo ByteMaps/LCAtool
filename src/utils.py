@@ -3,12 +3,7 @@
 import pandas as pd
 import streamlit as st
 from re import sub
-import plotly.express as px
 from uuid import uuid4
-from supabase import create_client
-from dotenv import load_dotenv
-from pandas import json_normalize
-import os
 
 FILE_PATH = "src/database.csv"
 TABLE = "test"
@@ -17,7 +12,7 @@ FLOWS = ['Production','Transport','Packaging','Usage','End of Life']
 TYPES = ['None']
 
 
-def	load_all(filepath=FILE_PATH):
+def	load_all(filepath=FILE_PATH):		# TODO becomes redundant
 	'''
 	Load database from file
 		- filepath: the path to the database file
@@ -27,7 +22,7 @@ def	load_all(filepath=FILE_PATH):
 	return database
 
 
-def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, database=load_all()):
+def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, database=load_all()):		# TODO rewrite input
 	'''
 	Format the new dataset and prepare to add to one of the databases.
 		- name: the name of the item
@@ -66,10 +61,10 @@ def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False, databa
 		row_data[f"{k} amount"] = float(value)
 		row_data[f"{k} units"] = unit
 
-	save_newrow(row_data, database)
+	save_newrow(row_data, database)	# TODO rewrite
 
 
-def save_newrow(row_data, database=load_all()):
+def save_newrow(row_data, database=load_all()):	# TODO becomes redundant
 	'''
 	Save the new item, then reload appropriate database
 		- row_data: the data to save, as a dictionary with keys matching the database columns
@@ -77,7 +72,7 @@ def save_newrow(row_data, database=load_all()):
 	Returns the updated database.
 	'''
 	database.loc[len(database)] = row_data
-	st.session_state.database.to_csv(FILE_PATH, index=False, sep=";")									# TODO review if session state is required here
+	st.session_state.database.to_csv(FILE_PATH, index=False, sep=";")
 	st.session_state.database = load_all()
 
 

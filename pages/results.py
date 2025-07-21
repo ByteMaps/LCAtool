@@ -4,7 +4,7 @@ from src.visualisations import *
 
 # SESSION ========================================================================================================================================
 
-if 'database' not in st.session_state:
+if 'database' not in st.session_state:	# TODO change loaded
 	st.session_state.database = load_all()
 
 if 'submissions' not in st.session_state:
@@ -19,7 +19,7 @@ def	reset():
 col1, col2 = st.columns(2)
 
 with col1:
-	st.session_state.comparison = st.multiselect('Items om te vergelijken', options = st.session_state.database["itemtype"].unique())
+	st.session_state.comparison = st.multiselect('Items om te vergelijken', options = st.session_state.database["itemtype"].unique()) # TODO change if needed
 with col2:
 	st.button("Reset vergelijking", on_click=reset)
 

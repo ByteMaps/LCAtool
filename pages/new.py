@@ -16,7 +16,7 @@ if 'type' not in st.session_state:
 if 'desc' not in st.session_state:
     st.session_state.desc = str(uuid4())
 
-if 'database' not in st.session_state:
+if 'database' not in st.session_state:	# TODO change loaded
 	st.session_state.database = load_all()
 
 def update():
@@ -40,7 +40,7 @@ with st.form("newItem"):
 	with col1:
 		name = st.text_input("Naam", key=st.session_state.name)
 	with col2:
-		item_type = st.selectbox("Item", options=st.session_state.database["itemtype"].unique(), accept_new_options=True, key=st.session_state.type)
+		item_type = st.selectbox("Item", options=st.session_state.database["itemtype"].unique(), accept_new_options=True, key=st.session_state.type) # TODO change if necessary
 	with col3:
 		flow_type = st.selectbox("Flow", options=FLOWS)
 
@@ -59,7 +59,7 @@ with st.form("newItem"):
 
 	submitted = st.form_submit_button("Toevoegen")
 	if submitted:
-		add_to_db(name, item_type, flow_type, description, st.session_state.item, entrytype, st.session_state.database)
+		add_to_db(name, item_type, flow_type, description, st.session_state.item, entrytype, st.session_state.database)		# TODO check if necessary
 		update()
 		st.success("Data toegevoegd!")
 

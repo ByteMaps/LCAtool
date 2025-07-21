@@ -2,7 +2,7 @@ from supabase import create_client
 from dotenv import load_dotenv
 import streamlit as st
 import os
-from pandas import json_normalize
+from pandas import json_normalize, to_numeric
 
 TABLE = "test"
 
@@ -19,14 +19,14 @@ def	load_database():
 	key = os.getenv("SUPABASE_KEY")
 	client = create_client(url, key) # type: ignore
 	table = client.table(TABLE).select('*').execute()
-	return url, key, client, table
+	return url, key, client, json_normalize(table.data)
 
 
-def	save_row(newrow, client_db):
-	client_db.table(TABLE).insert(newrow).execute()
+def	save_row(newrow, client):
+	client.table(TABLE).insert(newrow).execute()
 
 
-def overwrite_db(data, client_db):
+def overwrite_db(data, client):
 	'''Overwrite the database with the provided data. Make sure to use this with caution as it will delete all existing data and max batch size is 1000.
 	Args:
 		- data: a list of dictionaries containing the data to be saved
@@ -34,18 +34,28 @@ def overwrite_db(data, client_db):
 	Returns:
 		None
 	'''
-	client_db.table(TABLE).delete().not_.is_("id", "null").execute()
-	client_db.table(TABLE).insert(data).execute()
+	client.table(TABLE).delete().not_.is_("id", "null").execute()
+	client.table(TABLE).insert(data).execute()
 
 
-_, _, client, table = load_database()
+_, _, st.session_state.client, st.session_state.database = load_database()
 
 st.title(TABLE)
 # Extract the data from the APIResponse object
-table_data = table.data if hasattr(table, "data") else []
-new_data = st.data_editor(
-	json_normalize(table_data),
-	num_rows="dynamic",
-	use_container_width=True,
-	hide_index=True
-)
+if not st.session_state.database.empty:
+	float_cols = st.session_state.database.select_dtypes(include=['float']).columns
+	new_data = st.data_editor(
+		st.session_state.database,
+		num_rows="dynamic",
+		use_container_width=True,
+		column_config={c: st.column_config.NumberColumn(step=0.00001) for c in float_cols},
+		hide_index=True
+	)
+
+	if st.button("Opslaan"):
+		try:
+			new_data[float_cols] = new_data[float_cols].apply(to_numeric, errors='coerce')
+			overwrite_db(new_data.to_dict(orient="records"), st.session_state.client)
+			st.success("Data overgeschreven!")
+		except Exception as e:
+			st.error(f"Gefaald: {e}")
