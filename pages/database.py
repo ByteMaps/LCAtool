@@ -6,7 +6,7 @@ st.set_page_config(layout="wide")
 
 # SESSION ========================================================================================================================================
 
-if "database" not in st.session_state:
+if "database" not in st.session_state:		# TODO review & improve
 	st.session_state.client, st.session_state.database = load_database()
 
 # SESSION ========================================================================================================================================
@@ -32,15 +32,23 @@ if not st.session_state.database.empty:
 	with col1:
 		if st.button("Opslaan"):
 			try:
-				new_data[float_cols] = new_data[float_cols].apply(to_numeric, errors='coerce')
+				# 1) Check that there's actually data to save
+				if new_data.empty:
+					st.warning("Geen data om op te slaan")
+
+				# 2) Convert to numeric (coerce invalids to NaN)
+				new_data[float_cols] = new_data[float_cols].apply(pd.to_numeric, errors='coerce')
+
+				# 3) Warn if any values became NaN during conversion
+				if new_data[float_cols].isnull().any().any():
+					st.warning("Sommige numerieke waarden konden niet worden geconverteerd en zijn vervangen door NaN")
+
+				# 4) Overwrite database and report success
 				overwrite_db(new_data.to_dict(orient="records"), st.session_state.client)
 				st.success("Data overgeschreven!")
 			except Exception as e:
-				st.error(f"Gefaald: {e}")
-
+				st.error(f"Opslaan gefaald: {str(e)}")	
 	with col2:
 		if st.button("Opnieuw laden"):
-			try:
-				st.session_state.nde = str(uuid4())
-			except Exception as e:
-				st.error(f"Error bij opnieuw laden van database")
+			st.session_state.nde = str(uuid4())
+			st.rerun()

@@ -15,7 +15,7 @@ FLOWS = ['Production','Transport','Packaging','Usage','End of Life']
 TYPES = ['None']
 
 
-def	add_to_db(name, itemtype, flowtype, description, df, database, entrytype=False):
+def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False):
 	'''
 	Format the new dataset and prepare to add to one of the databases.
 		- name: the name of the item
@@ -27,7 +27,7 @@ def	add_to_db(name, itemtype, flowtype, description, df, database, entrytype=Fal
 	'''
 
 	# Clean data
-	df["Impact category"] = [sub(r'\s+', ' ', x.lower()) for x in df["Impact category"]]
+	df["Impact category"] = [sub(r'\s', ' ', x.lower()) for x in df["Impact category"]]
 
 	# Set up row
 	row_data = {
@@ -118,10 +118,24 @@ def overwrite_db(data, client):
 	Returns:
 		None
 	'''
+	if len(data) > 1000:
+		raise ValueError(f"Batch size {len(data)} exceeds maximum of 1000 records")
+
+	# Fetch existing data as backup
+	backup = client.table(TABLE).select('*').execute()
+
+	try:
+			client.table(TABLE).delete().not_.is_("id", "null").execute()
+			client.table(TABLE).insert(data).execute()
+	except Exception as e:
+		# Attempt to restore backup if available
+		if backup and backup.data:
+			client.table(TABLE).insert(backup.data).execute()
+		raise Exception(f"Failed to overwrite database: {str(e)}")
 	client.table(TABLE).delete().not_.is_("id", "null").execute()
 	client.table(TABLE).insert(data).execute()
 
 
 # Remove trailing _1, _2, etc. from impact category names
 def clean_category(cat):
-	return sub(r'_\d+$', '', cat)
+	return sub(r'_\d$', '', cat)

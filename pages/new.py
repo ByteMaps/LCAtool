@@ -59,7 +59,7 @@ with st.form("newItem"):
 
 	submitted = st.form_submit_button("Toevoegen")
 	if submitted:
-		add_to_db(name, item_type, flow_type, description, st.session_state.item, st.session_state.database, entrytype)		# TODO check if necessary
+		add_to_db(name, item_type, flow_type, description, st.session_state.item, entrytype)		# TODO check if necessary
 		update()
 		st.success("Data toegevoegd!")
 
