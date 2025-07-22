@@ -65,15 +65,15 @@ def impact_comparison(names, dfs):
 	)
 	return fig
 
-def calc_timeline(item:str, re_use_impact:float, renewal_impact:float, re_use_times:int, renewal_time:int, time:int=365):
+def calc_timeline(item:str, re_use_impact:float, replacement_impact:float, re_use_times:int, replacement_time:int, time:int=365):
 	'''Calculate the item's GWP impact over time based on usage & renewal'''
 	timeline_impact = {}
-	daily_usage = (re_use_times / renewal_time) * re_use_impact
+	daily_usage = (float(re_use_times) / replacement_time) * re_use_impact
 
 	for i in range(time):
 		day = daily_usage + timeline_impact[i-1] if i > 0 else daily_usage
-		if i % renewal_time == 0:
-			day += renewal_impact
+		if i % replacement_time == 0:
+			day += replacement_impact
 		timeline_impact[i] = round(day, 4)
 
 	return (item, timeline_impact)
@@ -84,3 +84,43 @@ def calc_timeline(item:str, re_use_impact:float, renewal_impact:float, re_use_ti
 
 # 	fig = px.line(impacts, x="Days", y="GWP impact", title="GWP output item X over 1 year")
 # 	fig.show(renderer="notebook")
+
+def	format_results(item_dfs:dict, days:int=365):
+	'''Get the item dataframe and extract GWP for usage and production categories for the item'''
+	item_impacts = []
+	for name, contents in item_dfs.items():
+		df = contents[0]
+
+		re_use_impact = df.query("flowtype == 'Usage'")['climate change'].sum() if 'Usage' in df['flowtype'].values else 0
+		replacement_impact = df.query("flowtype != 'Usage'")['climate change'].sum()
+		re_use_times = contents[2]
+		replacement_time = contents[1]
+		
+		item = (name, re_use_impact, replacement_impact, re_use_times, replacement_time, days)
+		item_impacts.append(item)
+
+	return item_impacts
+
+def	build_item_timeline(items:list[tuple]):
+	timeline_dfs = []
+	for item in items:
+		timeline = calc_timeline(item[0], item[1], item[2], item[3], item[4], item[5])
+		timeline_df = pd.DataFrame(list(timeline[1].items()), columns=["Days", f"GWP impact {item[0]}"])
+		timeline_dfs.append(timeline_df.set_index("Days"))
+	if timeline_dfs:
+		impacts = pd.concat(timeline_dfs, axis=1).reset_index()
+	else:
+		impacts = pd.DataFrame()
+	return impacts 													# type: ignore
+
+def display_timeline_graph(impacts:pd.DataFrame, days:int=365):
+	itemnames = [col for col in impacts.columns if col.startswith("GWP impact")]
+
+	fig = px.line(impacts, x="Days", y=itemnames, title=f"GWP impact in {days} dagen")	# TODO instead of days, use key len from impacts
+	# fig.show(renderer="browser")
+	return fig
+
+def	get_timeline(results, days):
+	item_impacts = format_results(results, days)
+	impacts = build_item_timeline(item_impacts)
+	return display_timeline_graph(impacts, days)

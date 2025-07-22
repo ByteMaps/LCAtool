@@ -29,7 +29,7 @@ for item in st.session_state.comparison:
 		st.subheader(f"{item}")
 		col1, col2 = st.columns(2)
 		with col1:
-			re_use = st.slider('Keren hergebruik', 0, 100, 10, 1)
+			re_use_times = st.slider('Keren hergebruik', 0, 100, 10, 1)
 			quantity_multiplier = st.slider('Aantal gebruikseenheden', 1, 100, 1, 1)
 		with col2:
 			flowtypes = st.multiselect('Flow types', options = st.session_state.database["flowtype"].unique())
@@ -38,9 +38,12 @@ for item in st.session_state.comparison:
 
 		submitted = st.form_submit_button("Maak")
 		if submitted:
-			results = calculate_impacts(st.session_state.database.copy(), item, quantity_multiplier, re_use, flowtypes)
+			results = calculate_impacts(st.session_state.database.copy(), item, quantity_multiplier, re_use_times, flowtypes)	# ! Re_use_times used here too, take in mind for timeline
 
-			st.session_state.submissions[item] = (results, replacement_time)
+			if type(replacement_time) == str: replacement_time = 100
+			if type(re_use_times) == str: re_use_times = 1
+			
+			st.session_state.submissions[item] = (results, float(replacement_time), float(re_use_times))						# Save the results
 
 			st.subheader(f"Productsysteem: {item}, 1 gebruikseenheid")
 			st.data_editor(
@@ -55,6 +58,7 @@ if len(st.session_state.submissions.keys()) == len(st.session_state.comparison) 
 	for sub_key, sub_values in st.session_state.submissions.items():
 		st.plotly_chart(impact_assessment(sub_key, sub_values[0]))
 
+
 	if len(st.session_state.submissions.keys()) >= 2:
 		st.divider()
 		st.subheader("Clustered stacked barchart")
@@ -62,9 +66,8 @@ if len(st.session_state.submissions.keys()) == len(st.session_state.comparison) 
 		results = [dfs[0] for _, dfs in st.session_state.submissions.items()]
 
 		st.plotly_chart(impact_comparison(names, results))
+		# st.plotly_chart(get_timeline(st.session_state.submissions, 365))
 
-		# TODO create line graph here based on submissions
+		
 
 	
-	# print("="*80)
-	# print(st.session_state.submissions)
