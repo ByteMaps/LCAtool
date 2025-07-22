@@ -4,7 +4,7 @@ from src.visualisations import *
 
 # SESSION ========================================================================================================================================
 
-if "database" not in st.session_state:
+if "database" not in st.session_state or "client" not in st.session_state:
 	st.session_state.client, st.session_state.database = load_database()
 
 if 'submissions' not in st.session_state:
@@ -19,9 +19,9 @@ def	reset():
 col1, col2 = st.columns(2)
 
 with col1:
-	st.session_state.comparison = st.multiselect('Items om te vergelijken', options = st.session_state.database["itemtype"].unique()) # TODO change if needed
+	st.session_state.comparison = st.multiselect('Items om te vergelijken', options = st.session_state.database["itemtype"].unique())
 with col2:
-	st.button("Reset vergelijking", on_click=reset)
+	st.button("Reset vergelijking", on_click=reset)		# TODO add input for amount of days
 
 
 for item in st.session_state.comparison:
@@ -33,14 +33,14 @@ for item in st.session_state.comparison:
 			quantity_multiplier = st.slider('Aantal gebruikseenheden', 1, 100, 1, 1)
 		with col2:
 			flowtypes = st.multiselect('Flow types', options = st.session_state.database["flowtype"].unique())
-			rep_time = st.text_input('Tijd tot vervanging (dagen)', placeholder='100')
+			replacement_time = st.text_input('Tijd tot vervanging (dagen)', placeholder='100')
 
 
 		submitted = st.form_submit_button("Maak")
 		if submitted:
 			results = calculate_impacts(st.session_state.database.copy(), item, quantity_multiplier, re_use, flowtypes)
 
-			st.session_state.submissions[item] = results
+			st.session_state.submissions[item] = (results, replacement_time)
 
 			st.subheader(f"Productsysteem: {item}, 1 gebruikseenheid")
 			st.data_editor(
@@ -53,14 +53,18 @@ if len(st.session_state.submissions.keys()) == len(st.session_state.comparison) 
 	st.divider()
 	st.subheader("Stacked barcharts per result")
 	for sub_key, sub_values in st.session_state.submissions.items():
-		st.plotly_chart(impact_assessment(sub_key, sub_values))
+		st.plotly_chart(impact_assessment(sub_key, sub_values[0]))
 
 	if len(st.session_state.submissions.keys()) >= 2:
 		st.divider()
 		st.subheader("Clustered stacked barchart")
 		names = [keys for keys, _ in st.session_state.submissions.items()]
-		results = [dfs for _, dfs in st.session_state.submissions.items()]
+		results = [dfs[0] for _, dfs in st.session_state.submissions.items()]
 
 		st.plotly_chart(impact_comparison(names, results))
 
+		# TODO create line graph here based on submissions
+
 	
+	# print("="*80)
+	# print(st.session_state.submissions)

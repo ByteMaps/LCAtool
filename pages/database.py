@@ -6,7 +6,7 @@ st.set_page_config(layout="wide")
 
 # SESSION ========================================================================================================================================
 
-if "database" not in st.session_state:		# TODO review & improve
+if "database" not in st.session_state or "client" not in st.session_state:
 	st.session_state.client, st.session_state.database = load_database()
 
 # SESSION ========================================================================================================================================

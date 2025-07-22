@@ -57,7 +57,7 @@ def	add_to_db(name, itemtype, flowtype, description, df, entrytype=False):
 	save_newrow(row_data)
 
 
-def	calculate_impacts(df, item, amount=1, usage=10, flowtypes=[]):
+def	calculate_impacts(df:pd.DataFrame, item:str, amount=1, usage=10, flowtypes:list[str]=[]):
 	'''
 	Calculate the impacts based on the current database
 		- item: the item to calculate impacts for
@@ -68,16 +68,28 @@ def	calculate_impacts(df, item, amount=1, usage=10, flowtypes=[]):
 	Returns a filtered dataframe with the impacts for the specified item.
 	'''
 
+	# Ensure usage is at least 1 to avoid division by zero or no impact calculation
 	if usage == 0: usage = 1
+
+	# Work on a copy to avoid modifying the original dataframe
 	results_db = df.copy()
+
+	# Remove all columns containing 'units' and standardize column names by removing ' amount'
 	results_db = results_db.loc[:, ~results_db.columns.str.contains('units', case=False)]
 	results_db.columns = results_db.columns.str.replace(' amount', '', regex=False)
+
+	# Filter the dataframe for the specified item
 	filtered_db = results_db[results_db["itemtype"] == item].copy()
+
+	# If flowtypes are specified, filter further by those flowtypes
 	if flowtypes:
 		filtered_db = filtered_db[results_db["flowtype"].isin(flowtypes)].copy()
-	filtered_db.loc[:, "quantity"] = filtered_db["quantity"] * amount							# Quantity
-	filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"] = filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"].apply(lambda x: x * usage)  # Re-use only for 'Usage' flowtype
-	# Multiply all columns except the first five (assumed metadata) by "quantity"
+
+	# Adjust the 'quantity' column for the total amount and for usage-based flows
+	filtered_db.loc[:, "quantity"] = filtered_db["quantity"] * amount
+	filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"] = filtered_db.loc[filtered_db["flowtype"] == "Usage", "quantity"].apply(lambda x: x * usage)
+
+	# Multiply all numeric impact columns (excluding metadata and unit columns) by the adjusted quantity
 	cols_to_multiply = [col for col in filtered_db.columns if col not in filtered_db.columns[:5] and not col.endswith("units")]
 	filtered_db[cols_to_multiply] = filtered_db[cols_to_multiply].apply(pd.to_numeric, errors='coerce')
 	filtered_db[cols_to_multiply] = filtered_db[cols_to_multiply].apply(lambda x: x * filtered_db["quantity"])

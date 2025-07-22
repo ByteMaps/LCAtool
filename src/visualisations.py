@@ -65,9 +65,9 @@ def impact_comparison(names, dfs):
 	)
 	return fig
 
-def calc_timeline(re_use_impact, renewal_impact, re_use_times, renewal_time, time=365):
+def calc_timeline(item:str, re_use_impact:float, renewal_impact:float, re_use_times:int, renewal_time:int, time:int=365):
 	'''Calculate the item's GWP impact over time based on usage & renewal'''
-	timeline_impact = dict()
+	timeline_impact = {}
 	daily_usage = (re_use_times / renewal_time) * re_use_impact
 
 	for i in range(time):
@@ -76,11 +76,11 @@ def calc_timeline(re_use_impact, renewal_impact, re_use_times, renewal_time, tim
 			day += renewal_impact
 		timeline_impact[i] = round(day, 4)
 
-	return timeline_impact						# ? Normalise compared to other outputs?
+	return (item, timeline_impact)
 
-if __name__=='__main__':
-	impacts = pd.DataFrame(calc_timeline(0.03, 0.5, 5, 20).items(), columns=["Days", "GWP impact"])
-	print(impacts)
+# if __name__=='__main__':
+# 	impacts = pd.DataFrame(calc_timeline("Test Material", 0.03, 0.5, 5, 20)[1].items(), columns=["Days", "GWP impact"])
+# 	print(impacts)
 
-	fig = px.line(impacts, x="Days", y="GWP impact", title="GWP output item X over 1 year")
-	fig.show(renderer="notebook")
+# 	fig = px.line(impacts, x="Days", y="GWP impact", title="GWP output item X over 1 year")
+# 	fig.show(renderer="notebook")

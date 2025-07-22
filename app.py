@@ -6,9 +6,8 @@ from src.utils import *
 if "form1_submitted" not in st.session_state:
 	st.session_state.form1_submitted = False
 
-if "database" not in st.session_state:
+if "database" not in st.session_state or "client" not in st.session_state:
 	st.session_state.client, st.session_state.database = load_database()
-
 # SESSION ========================================================================================================================================
 
 st.title("LCA Tool voor verzorgend wassen")
