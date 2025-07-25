@@ -1,8 +1,5 @@
 import streamlit as st
 from src.utils import *
-from dotenv import load_dotenv
-
-load_database()
 
 # SESSION ========================================================================================================================================
 

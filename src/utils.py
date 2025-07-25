@@ -5,8 +5,7 @@ import streamlit as st
 from re import sub
 from uuid import uuid4
 from supabase import create_client
-from dotenv import load_dotenv
-import os
+import streamlit as st
 from pandas import json_normalize, to_numeric
 
 TABLE = "main"
@@ -106,8 +105,8 @@ def	load_database():
 		client_db: the Supabase client object
 	'''
 
-	url = os.getenv("SUPABASE_URL")
-	key = os.getenv("SUPABASE_KEY")
+	url = st.secrets["general"]["SUPABASE_URL"]
+	key = st.secrets["general"]["SUPABASE_KEY"]
 	if not url:
 		raise ValueError("SUPABASE_URL not found in environment variables. Please check your .env file and reload the environment.")
 	if not key:
