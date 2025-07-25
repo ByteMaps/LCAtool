@@ -105,7 +105,6 @@ def	load_database():
 		key: the API key for the Supabase instance
 		client_db: the Supabase client object
 	'''
-	load_dotenv()
 
 	url = os.getenv("SUPABASE_URL")
 	key = os.getenv("SUPABASE_KEY")
