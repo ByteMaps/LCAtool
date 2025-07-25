@@ -109,7 +109,9 @@ def	load_database():
 
 	url = os.getenv("SUPABASE_URL")
 	key = os.getenv("SUPABASE_KEY")
-	client = create_client(url, key) # type: ignore
+	if not url or not key:
+		raise ValueError("SUPABASE_URL and/or SUPABASE_KEY not found in environment variables. Please check your .env file and reload the environment.")
+	client = create_client(url, key)
 	table = client.table(TABLE).select('*').execute()
 	database = json_normalize(table.data)
 	return client, database
